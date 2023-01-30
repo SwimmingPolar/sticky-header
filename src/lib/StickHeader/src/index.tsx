@@ -6,14 +6,16 @@
 //      - (1) Push the rest of the elements upward by the amount of the height of the fixed element
 //      - (2) The offsetTop value of the rest of the elements that are pushed upward will be changed.
 //        This is the value that is used to calculate if the element should be fixed or not.
-//      - (3) In responsive design, the height of the fixed element will change when the window is resized
-//        Even worse, some of the elements might be hidden when the window is resized
+//      - (3) In responsive design, the height of the fixed elements have possibilities of changing its layout
+//            when the window is resized. Even worse, some of the elements might get hidden.
 //      - (4) Original offsetTop value of elements that are to be stacked will be changed.
 //    To address this problems, we need to:
-//      - (1,2) Have specific padding element that will be used to push the rest of the elements upward, when the fixed element is fixed
-//      - (3)   The padding element will also be responsive.
-//      - (3)   The padding element will not be hidden when the window is resized.
-//      - (4)   The padding element will be used to calculate the original offsetTop value of the elements that are to be stacked.
+//      - (1,2) Must have a padding element that will be used to push the rest of the elements downward, when the fixed element is fixed.
+//              In the other words, the padding element must have the same height as the fixed element's height.
+//              So, the rest of the elements are not pushed upward or downward when the fixed elements get out the document flow.
+//      - (3)   The padding element must also be responsive.
+//      - (3)   The padding element must not be hidden when the window is resized.
+//      - (4)   The padding element must be used to calculate the original offsetTop value of the elements that are to be stacked.
 //              This means, when the fixed elements become fixed, the padding element will have the same offsetTop value as the original offsetTop value of the elements that are to be stacked.
 //              .element.not-fixed {
 //                height: not-fixed-height-value px

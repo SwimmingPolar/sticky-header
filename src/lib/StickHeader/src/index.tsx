@@ -30,6 +30,13 @@
 //              .padding.fixed {
 //                height: not-fixed-height-value px
 //              }
+//  2. The second problem is that to detect if the element should be fixed or not, we need to calculate the offsetTop value of the element.
+//     On the current implementation, we have global event listener inside context provider which will trigger a re-render of all the elements that are using the hook.
+//     But it will trigger re-render to all elements that are using the hook, even if the element doesn't participate in the stacking.
+//     We can have each element to have its own event listener, but this might be inefficient as well.
+//     @Todo: decide how to detect if the element should be fixed or not.
+//            Current implementation: global event listener inside context provider
+//            Alternative:            each element to have its own event listener
 
 import React, {
   createContext,

@@ -4,7 +4,7 @@ import Card from "./components/Card";
 const Container = () => {
   return (
     <div className="container">
-      {Array.from({ length: 100 }).map((_, index) => (
+      {Array.from({ length: 30 }).map((_, index) => (
         <Card key={index} />
       ))}
     </div>

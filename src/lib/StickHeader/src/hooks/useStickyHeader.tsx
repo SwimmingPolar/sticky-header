@@ -1,64 +1,11 @@
-import React, {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useContext, useEffect, useMemo, useRef } from "react";
 import { v4 as uuid } from "uuid";
+import { StickyHeaderContext } from "../";
 
-type StackedElements = Record<string, React.RefObject<HTMLDivElement>>[];
-
-type StickyHeaderContextType = {
-  stackedElements: StackedElements;
-  setStackedElements: React.Dispatch<React.SetStateAction<StackedElements>>;
-};
-
-const StickyHeaderContext = createContext({} as StickyHeaderContextType);
-
-type StickyHeaderProviderProps = {
-  children: React.ReactNode;
-};
-
-export const StickyHeaderProvider = ({
-  children,
-}: StickyHeaderProviderProps) => {
-  const [stackedElements, setStackedElements] = useState([] as StackedElements);
-  const value = useMemo(() => {
-    return {
-      stackedElements,
-      setStackedElements,
-    };
-  }, [stackedElements, setStackedElements]);
-
-  // Trigger re-render when the window is resized
-  const handleResize = useCallback(() => {
-    setStackedElements((prev) => [...prev]);
-  }, []);
-
-  useEffect(() => {
-    ["resize", "scroll"].forEach((event) => {
-      window.addEventListener(event, handleResize);
-    });
-    return () => {
-      ["resize", "scroll"].forEach((event) => {
-        window.removeEventListener(event, handleResize);
-      });
-    };
-  }, []);
-
-  return (
-    <StickyHeaderContext.Provider value={value}>
-      {children}
-    </StickyHeaderContext.Provider>
-  );
-};
-
-const useStickyHeader = () => {
+export const useStickyHeader = () => {
   const id = useMemo(() => uuid(), []);
   const ref = useRef<HTMLDivElement>(null);
+  const paddingRef = useRef<HTMLDivElement>(null);
   const { stackedElements, setStackedElements } =
     useContext(StickyHeaderContext);
 
@@ -86,21 +33,34 @@ const useStickyHeader = () => {
     [stackedElements]
   );
 
-  // Backup the original top position of the current element
-  const [originalTop, setOriginalTop] = useState(0);
-  useEffect(
-    () => {
-      setOriginalTop(ref.current?.offsetTop || 0);
-    },
-    // When the top changes, the originalTop should be updated
-    [top]
-  );
-
   // Decides if the current element should be fixed or not
   const isFixed = useMemo(() => {
-    const isFixed = document.documentElement.scrollTop + top > originalTop;
+    const isFixed =
+      (paddingRef.current?.getBoundingClientRect().top || 0) - top < 0;
+
     return isFixed ? true : false;
-  }, [top, stackedElements, originalTop]);
+  }, [top, stackedElements]);
+
+  const style = useMemo(
+    () =>
+      isFixed
+        ? {
+            position: "fixed",
+            top: `${top}px`,
+          }
+        : {},
+    [top, isFixed]
+  ) as React.CSSProperties;
+
+  useEffect(() => {
+    if (isFixed) {
+      ref.current && ref.current.classList.add("fixed");
+      paddingRef.current && paddingRef.current.classList.add("fixed");
+    } else {
+      ref.current && ref.current.classList.remove("fixed");
+      paddingRef.current && paddingRef.current.classList.remove("fixed");
+    }
+  }, [isFixed]);
 
   // Append the current ref element to the stackedElements array on initial render only
   useEffect(() => {
@@ -120,9 +80,9 @@ const useStickyHeader = () => {
   }, []);
 
   return {
-    top,
-    isFixed,
     ref,
+    paddingRef,
+    style,
   };
 };
 

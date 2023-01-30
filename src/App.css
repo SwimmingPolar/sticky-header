@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -9,7 +13,7 @@
 .layout {
   display: flex;
   flex-direction: column;
-  height: 100px;
+  height: 100%;
   width: 250px;
   background-color: #ffffff;
 }
@@ -25,9 +29,24 @@
   border-radius: 2px;
   box-shadow: 0px 0px 4px 1px rgb(0 0 0 / 35%);
 }
+.header.fixed {
+  width: 250px;
+}
+.header-padding.fixed {
+  height: 35px;
+}
+
+@media (min-width: 800px) {
+  .header {
+    height: 45px;
+  }
+  .header-padding.fixed {
+    height: 45px;
+  }
+}
 
 .content {
-  flex: 1;
+  height: 65px;
   display: flex;
   flex-direction: row;
   align-items: center;

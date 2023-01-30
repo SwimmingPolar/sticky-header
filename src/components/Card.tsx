@@ -1,37 +1,28 @@
 import { faker } from "@faker-js/faker";
-import { useEffect, useMemo } from "react";
-import styled from "styled-components";
-import useStickyHeader from "../hook/useStickyHeader";
-
-const HeaderBox = styled.div<{ top: number; isFixed?: boolean }>`
-  top: ${(props) => props.top}px;
-  ${(props) => (props.isFixed ? "position: fixed" : null)}
-`;
+import React, { useMemo } from "react";
+import { useStickyHeader } from "../lib";
 
 const Header = () => {
-  const { top, isFixed, ref } = useStickyHeader();
+  const { ref, paddingRef, style } = useStickyHeader();
   const catName = useMemo(() => faker.animal.cat(), []);
 
-  useEffect(() => {
-    console.log(catName);
-  }, [top, isFixed]);
-
-  const render = useMemo(
-    () => (
-      <HeaderBox className="header" ref={ref} top={top} isFixed={isFixed}>
+  return (
+    <div>
+      <div className="header-padding" ref={paddingRef} />
+      <div className="header" ref={ref} style={style}>
         <h3>{catName}</h3>
-      </HeaderBox>
-    ),
-    [top, isFixed]
+      </div>
+    </div>
   );
-
-  return render;
 };
 
+const MemoizedHeader = React.memo(Header);
+
 const Content = () => {
+  const color = useMemo(() => faker.color.human(), []);
   return (
     <div className="content">
-      <span>{faker.color.human()}</span>
+      <span>{color}</span>
     </div>
   );
 };
@@ -39,7 +30,7 @@ const Content = () => {
 const Card = () => {
   return (
     <div className="layout">
-      <Header />
+      <MemoizedHeader />
       <Content />
     </div>
   );

@@ -19,7 +19,7 @@ export const useStickyHeader = () => {
 
       // Sum up all the height of the elements before the current element
       const top = stackedElements.slice(0, stackedAt).reduce((top, entry) => {
-        const [entryId, elementRef] = Object.entries(entry)[0];
+        const [_, elementRef] = Object.entries(entry)[0];
         return top + (elementRef.current?.offsetHeight || 0);
       }, 0);
 

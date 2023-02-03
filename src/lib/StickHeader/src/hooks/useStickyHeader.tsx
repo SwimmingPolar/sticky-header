@@ -9,6 +9,12 @@ export const useStickyHeader = () => {
   const { stackedElements, setStackedElements } =
     useContext(StickyHeaderContext);
 
+  useEffect(() => {
+    if (!ref.current || !paddingRef.current) {
+      console.error("ref.current or paddingRef.current is null");
+    }
+  }, [ref, paddingRef]);
+
   const top = useMemo(
     () => {
       // Find the index of the current element in the stackedElements array
